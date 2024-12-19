@@ -5,9 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const handlePredict = async (request, h) => {
   try {
     const { payload } = request;
-    const imageFile = payload.image; // Field name for file
+    const imageFile = payload.image;
 
-    // Validate file size
     if (imageFile.bytes > 1000000) {
       return h.response({
         status: 'fail',
@@ -15,7 +14,6 @@ const handlePredict = async (request, h) => {
       }).code(413);
     }
 
-    // Perform inference
     const predictionResult = await inference.predict(imageFile);
     const predictionId = uuidv4();
     const suggestionMessage = predictionResult === 'Cancer' 
@@ -28,8 +26,7 @@ const handlePredict = async (request, h) => {
       suggestion: suggestionMessage,
       createdAt: new Date().toISOString(),
     };
-
-    // Save to Firestore
+    
     await dataService.savePrediction(predictionData);
 
     return h.response({

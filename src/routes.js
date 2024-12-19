@@ -1,5 +1,5 @@
 const inference = require('./inference');
-const dataStore = require('./dataStore');
+const dataStore = require('./data');
 const crypto = require('crypto');
 
 const handlePredict = async (request, h) => {
