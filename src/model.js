@@ -2,11 +2,13 @@ const tf = require('@tensorflow/tfjs-node');
 
 let model;
 
-const loadModel = async () => {
-  if (!model) {
-    model = await tf.loadLayersModel(process.env.MODEL_URL);
+async function loadModel() {
+  try {
+      const model = await tf.loadLayersModel('https://storage.googleapis.com/asclepius-models-2024/model-in-prod/model.json');
+      console.log(model.summary());
+  } catch (err) {
+      console.error('Error loading model:', err);
   }
-  return model;
 };
 
 module.exports = loadModel;
