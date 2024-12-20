@@ -9,9 +9,9 @@ const routes = [
             payload: {
                 allow: 'multipart/form-data',
                 multipart: true,
-                maxBytes: 1000000,
+                maxBytes: 1048576,
                 output: 'stream',
-                parse: true,
+                parse: true
             },
         },
     },

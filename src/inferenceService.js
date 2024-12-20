@@ -16,6 +16,7 @@ async function predictClassification(model, image) {
         const label = confidenceScore > 50 ? 'Cancer' : 'Non-cancer';
 
         const suggestion = label === 'Cancer' ? 'Segera periksa ke dokter!' : 'Penyakit kanker tidak terdeteksi.';
+        console.log('Prediction result:', { confidenceScore, label, suggestion });
 
         return { confidenceScore, label, suggestion };
     } catch (error) {
