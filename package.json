@@ -1,19 +1,27 @@
 {
-  "name": "backend-simple",
+  "name": "backend-copy",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/server.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rusmn06/submissionasclepius.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rusmn06/submissionasclepius/issues"
+  },
+  "homepage": "https://github.com/rusmn06/submissionasclepius#readme",
   "description": "",
   "dependencies": {
     "@google-cloud/firestore": "^7.11.0",
     "@hapi/hapi": "^21.3.12",
-    "@tensorflow/tfjs-node": "^4.14.0",
-    "dotenv": "^16.4.7",
-    "uuid": "^11.0.3"
+    "@tensorflow/tfjs-node": "^4.15.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.7"
   }
 }

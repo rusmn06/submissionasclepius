@@ -1,47 +1,50 @@
-const inference = require('./inference');
-const dataService = require('./data');
-const { v4: uuidv4 } = require('uuid');
+const predictClassification = require('./inferenceService');
+const crypto = require('crypto');
+const storeData = require('./storeData');
 
-const handlePredict = async (request, h) => {
-  try {
-    const { payload } = request;
-    const imageFile = payload.image;
+async function postPredictHandler(request, h) {
+    try {
+        const { image } = request.payload;
+        const { model } = request.server.app;
 
-    if (imageFile.bytes > 1000000) {
-      return h.response({
-        status: 'fail',
-        message: 'Payload content length greater than maximum allowed: 1000000',
-      }).code(413);
+        if (image._data.length > 1000000) {
+            return h.response({
+                    status: 'fail',
+                    message: 'Payload content length greater than maximum allowed: 1000000',
+                }).code(413);
+        }
+
+        const { confidenceScore, label, suggestion } = await predictClassification(model, image._data);
+
+        const id = crypto.randomUUID();
+        const createdAt = new Date().toISOString();
+
+        const data = {
+            id,
+            result: label,
+            suggestion,
+            confidenceScore,
+            createdAt,
+        };
+
+        await storeData(id, data);
+
+        return h.response({
+                status: 'success',
+                message: 'Model is predicted successfully',
+                data: {
+                    id,
+                    result: label,
+                    suggestion,
+                    createdAt,
+                },
+            }).code(200);
+    } catch (error) {
+        return h.response({
+                status: 'fail',
+                message: 'Terjadi kesalahan dalam melakukan prediksi',
+            }).code(400);
     }
-
-    const predictionResult = await inference.predict(imageFile);
-    const predictionId = uuidv4();
-    const suggestionMessage = predictionResult === 'Cancer' 
-      ? 'Segera periksa ke dokter!' 
-      : 'Penyakit kanker tidak terdeteksi.';
-
-    const predictionData = {
-      id: predictionId,
-      result: predictionResult,
-      suggestion: suggestionMessage,
-      createdAt: new Date().toISOString(),
-    };
-    
-    await dataService.savePrediction(predictionData);
-
-    return h.response({
-      status: 'success',
-      message: 'Model is predicted successfully',
-      data: predictionData,
-    }).code(200);
-
-  } catch (error) {
-    console.error(error);
-    return h.response({
-      status: 'fail',
-      message: 'Terjadi kesalahan dalam melakukan prediksi',
-    }).code(400);
-  }
-};
-
-module.exports = { handlePredict };
+}
+   
+  module.exports = postPredictHandler;
