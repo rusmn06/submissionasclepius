@@ -41,10 +41,10 @@ async function postPredictHandler(request, h) {
             }).code(200);
     } catch (error) {
         return h.response({
-                status: 'fail',
-                message: 'Terjadi kesalahan dalam melakukan prediksi',
+            status: 'fail',
+            message: 'Terjadi kesalahan dalam melakukan prediksi',
             }).code(400);
-    }
+        }
 }
    
   module.exports = postPredictHandler;
