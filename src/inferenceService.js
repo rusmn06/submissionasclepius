@@ -1,10 +1,11 @@
 const tf = require('@tensorflow/tfjs-node');
+const InputError = require('./InputError');
 
 async function predictClassification(model, image) {
     
     try {
         const tensor = tf.node
-            .decodeImage(image)
+            .decodeJpeg(image)
             .resizeNearestNeighbor([224, 224])
             .expandDims()
             .toFloat();
@@ -17,12 +18,9 @@ async function predictClassification(model, image) {
         const suggestion = label === 'Cancer' ? 'Segera periksa ke dokter!' : 'Penyakit kanker tidak terdeteksi.';
         console.log('Prediction result:', { confidenceScore, label, suggestion });
 
-        return { label, suggestion };
+        return { confidenceScore, label, suggestion };
     } catch (error) {
-        return h.response({
-            status: 'fail',
-            message: 'Terjadi kesalahan dalam melakukan prediksi',
-        }).code(400);
+        throw new InputError(`Terjadi kesalahan input: ${error.message}`);
     }
 }
 
