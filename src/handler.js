@@ -20,40 +20,27 @@ async function postPredictHandler(request, h) {
                 message: 'Payload content length greater than maximum allowed: 1000000',
             }).code(413);
         }
-        try {
-            
-            const { confidenceScore, label, suggestion } = await predictClassification(model, image._data);
-
-            const id = crypto.randomUUID();
-            const createdAt = new Date().toISOString();
-
-            const data = {
+        
+        const { label, suggestion } = await predictClassification(model, image._data);
+        const id = crypto.randomUUID();
+        const createdAt = new Date().toISOString();
+        
+        const data = {
                 id,
                 result: label,
                 suggestion,
-                confidenceScore,
                 createdAt,
             };
-            
             await storeData(id, data);
             
-            return h.response({
+            const response = h.response({
                 status: 'success',
-                message: 'Model is predicted successfully',
-                data: {
-                    id,
-                    result: label,
-                    suggestion,
-                    createdAt,
-                },
-            }).code(200);
-        } catch (error) {
-            console.error('Error during prediction:', error.message);
-            return h.response({
-            status: 'fail',
-            message: 'Terjadi kesalahan dalam melakukan prediksi',
-            }).code(400);
-        }
+                message: 'Model is predicted successfully.',
+                data
+                });
+                response.code(201);
+                return response;
+
 }
    
   module.exports = postPredictHandler;
